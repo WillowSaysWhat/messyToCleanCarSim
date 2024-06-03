@@ -22,6 +22,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CarSimBetter.py" />
+    <Compile Include="CheckThat.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="simulation.txt" />

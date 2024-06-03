@@ -1,8 +1,5 @@
-
-
 import time
-
-
+from CheckThat import CheckThat
 
 RIGHT = 1
 LEFT = -1
@@ -17,160 +14,68 @@ class Car:
         self.broken = False  # indicates whether car is broken
         self.simulation = []
         self.simulation_loaded = False
-        
- ######## CHECKS ##########
-  def isBroken(self):
-     if self.broken:
-      print("Car is Broken!!!")
-      return
-  
-  def isWrongGear(self, selected_gear):
-     if (selected_gear == REVERSE and self.speed > 0) or (selected_gear == FORWARD and self.speed < 0):
-        self.broken = True
-        print("BOOM!")
-        return
-     
-  def isInForward(self, seleted_gear):   
-     if self.speed == 0:  # And self.speed is 0...
-        self.gear = FORWARD  # Change gear to 1
-        print('Car is in FORWARD...')
-        time.sleep(1)
-        return True
-     else:
-        return False
-     
-  def isInReverse(self, selected_gear):
-     if selected_gear == REVERSE: 
-        self.gear = REVERSE 
-        print('Car is in REVERSE.')
-        time.sleep(1)
-        return
-     
-   # if the car is in 1st or higher gear, it accelerates forward.     
-  def isTravelingForward(self):
-     if self.gear >= FORWARD:
-        self.speed +=5
-        self.change_gear()
-        return
-        
-   # if the car is in reverse, it accelaerates backward.     
-  def isTravellingInReverse(self):
-      if self.gear == REVERSE:
-       self.speed -= 5
-       self.change_gear()
-       return
+        self.checkThat = CheckThat() 
       
-  # if the car is at max speed it will not let is accelerate higher.
-  def isTopSpeedForward(self):
-     if self.speed >80:
-       self.speed = 80
-       print("You are at Max Speed!")
-       time.sleep(1)
-       return
-     
-  # does the same in reverse.
-  def isTopSpeedReverse(self):
-     if self.speed < -10:
-       self.speed = -10
-       print("you are at Max Speed in Reverse!")
-       time.sleep(1)
-       return
-   
-   
- # Slows forward motion by 5km/h, if the car is stopped it tells the user.
-  def isBrakingForward(self):
-     if self.gear >= FORWARD:
-       if self.speed >=FORWARD:
-          self.speed -= 5
-          print("Braking...")
-          time.sleep(1)
-          return
-       else:
-        print("Car is stopped.")
-        return 
-  
-    # does the same in reverse.
-  def isBrakingInReverse(self):
-     if self.gear == REVERSE:
-       if self.speed < REVERSE:
-          self.speed += 5
-          print("Braking...")
-          time.sleep(1)
-          return
-       else:
-          print("Car is stopped.")
-          return
-  # checks that the turning circle remains a clock. 
-  def isItAclock(self):
-     if self.direction == 13:
-        self.direction = 1
-        return
-     elif self.direction == 0:
-        self.direction = 12
-        return
-     
-  def isTurningInReverse(self, direction_change):
-     if self.gear == REVERSE: # checking to see if car is in reverse
-        direction_change *= -1
-        
-        if direction_change == RIGHT:
-            print('Turning Left...')
-            
-        else:
-            print('Turning Right...')
-            
-     return direction_change
-  
-  def isTurning(self, direction_change):
-     if direction_change == RIGHT:
-            print('Turning Right...')
-            time.sleep(1)
-     elif direction_change == LEFT:
-            print('Turning Left...')
-            time.sleep(1)
-  
-     
 ###### FUNTIONALITY #######
-     
+  # Checks whether car is broken.
+  # checks whether car is accelerating forward or back by the gear it is in and then +/- 5.
+  # does a gear change if needed.
+  # Then checks to see if car is at max speed.
   def accelerate(self):
-    self.isBroken()
+    
+    if self.isBroken():
+       return
+
     time.sleep(1)
     print("Accelerating...")
-  # checks whether to accelerate forward or backward.
-    self.isTravelingForward()
-    self.isTravellingInReverse()
-   # checks that car does not exceed max speed in both directions.  
-    self.isTopSpeedForward()
-    self.isTopSpeedReverse()
+    self.speed = self.checkThat.isAcceleratingForwardReverse(self.gear, self.speed)
+    self.change_gear()
+    self.speed = self.checkThat.isTopSpeedForwardReverse(self.speed)
     return
   
-   
+  # Checks whether car is broken.
+  # Checks whether car is braking traveling forward or reverse by gear and +/- 5km/h.
+  # does a gear change if needed.
   def brake(self):
-     self.isBroken()
-   # checks whether to brake forwards or backwards     
-     self.isBrakingInReverse()
-     self.isBrakingForward()
+     
+     if self.isBroken():
+        return
+     
+     self.speed = self.checkThat.isBrakingForwardReverse(self.gear, self.speed)
      self.change_gear()
      return
   
 
-
+  # checks whether car is broken.
+  # prints direction turning.
+  # turns car.
+  # make sure we indicate direction with a clock.
   def turn_steering_wheel(self, directionChange):
-    self.isBroken()
+    
+    if self.isBroken:
+        return
+    
     print("Turning...")
-    self.isTurningInReverse(directionChange)
-    self.isTurning(directionChange)
+    directionChange = self.checkThat.isTurningInReverse(self.gear, directionChange)
+    self.checkThat.isTurning(directionChange)
     self.direction += directionChange
-    self.isItAclock()
+    self.checkThat.isItAclock(self.direction)
     return
 
+  # checks that car is not suddenly being placed in opposing gear while traveling at speed. 
+  # checks whether car is broken.
+  # Checks whether the car is stopped and readly to be placed in gear.
+  # changes gear using Lists and a loop.
   def change_gear(self, selectedGear = FORWARD):
      
-     self.isBroken
-     self.isWrongGear(selectedGear)
-     isForward = self.isInForward(selectedGear)
-     self.isInReverse(selectedGear)
+     self.broken = self.checkThat.isWrongGear(selectedGear, self.speed)
      
+     if self.isBroken:
+        return
+     
+     self.gear = self.checkThat.isInForwardReverse(selectedGear, self.speed)  
+
+     # Change gears
      if self.gear > 0:
         gear_ratio = [5, 10, 15, 20, 25, 30, 35, 40, 45]
         gears_avail = [1, 1, 2, 2, 3, 3, 4, 4, 5]
@@ -182,12 +87,12 @@ class Car:
               time.sleep(1)
               
      
- 
+  # displays data in console.
   def display_stats(self):
       print(f"Speed = {self.speed} Gear = {self.gear}  Direction = {self.direction} \n")
       time.sleep(1)
  
-
+  # gets commands and places them in a List
   def load_simulation(self, filename):
      try:
         openFile = open(filename)
@@ -201,11 +106,11 @@ class Car:
         print("There is no file associated with this simulator.")
         
 
-
- 
+  # finds command from the simulation List and matches it with 
+  # commands_and_actions dictionary then executes the method and arg.
   def run_simulation(self):
      
-     # dictionary with all recognised commands and actions.
+     
      commands_and_actions = {
         "FORWARD": (self.change_gear, FORWARD),     
         "ACCELERATE": (self.accelerate, None), 
@@ -215,8 +120,6 @@ class Car:
         "REVERSE": (self.change_gear, REVERSE)
         }
      
-
-     # executes action via dictionary.
      for command in self.simulation:
         action = commands_and_actions.get(command)
         if action:
@@ -228,11 +131,8 @@ class Car:
               self.display_stats()
         else:
            print("This command is not recognised.")
-           
-        
-  
-
-
+          
+# Execution
 if __name__ == '__main__':
     my_car = Car()
     my_car.load_simulation("simulation.txt")
