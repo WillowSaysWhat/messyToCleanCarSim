@@ -110,7 +110,7 @@ class Car:
   # commands_and_actions dictionary then executes the method and arg.
   def run_simulation(self):
      
-     
+     # this is an automatic transmition (D = FORWARD, R =REVERSE)
      commands_and_actions = {
         "FORWARD": (self.change_gear, FORWARD),     
         "ACCELERATE": (self.accelerate, None), 
