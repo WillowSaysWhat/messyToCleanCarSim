@@ -6,7 +6,7 @@ This is a novice project that was actually an assigment from year 0 (Foundaton) 
 
 # The Car Simulator
 The assessment was to design a simple Console car simulator. The code format was provided and looked like this:
-```
+```py
 # Python
 import time
 RIGHT = 1
@@ -44,7 +44,7 @@ if __name__ == '__main__':
     my_car.run_simulation()
 ```
 The car sim was expected to react to commands read from a text file ``` simulation.txt ```. Example of the textfile below:
-```
+```txt
 FORWARD
 ACCELERATE
 RIGHT
@@ -63,7 +63,7 @@ ACCELERATE
 ```
 The car was thought of as Automatic, therefore, the user was not expected to interact with the sim to change gear. That was the simulations task.
 The Automaic gear ratio was:
-```
+```py
 gears change at (km/h) [5, 10, 15, 20, 25, 30, 35, 40, 45] 
 gears numbered at      [1,  1,  2,  2,  3,  3,  4,  4,  5]
 ```
